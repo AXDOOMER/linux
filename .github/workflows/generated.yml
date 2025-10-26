@@ -1,0 +1,49 @@
+name: Compile Linux Kernel
+
+on:
+  push:
+    branches:
+      - main  # Trigger on pushes to the main branch; adjust as needed
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4  # Checks out your repo; optional if kernel source is already in repo
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            bc \
+            bison \
+            build-essential \
+            ccache \
+            dwarves \
+            flex \
+            git \
+            kernel-package \
+            libelf-dev \
+            libncurses5-dev \
+            libssl-dev \
+            fakeroot
+
+      - name: Compile kernel
+        run: |
+          make -j$(nproc)  # Compile with all available cores; this may take significant time
+
+      - name: Optional - Build Debian package
+        run: |
+          make -j$(nproc) bindeb-pkg  # Builds a .deb package; optional step for packaging
+        if: success()  # Run only if compilation succeeds
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: kernel-build
+          path: |
+            arch/x86/boot/bzImage  # Example: Upload the kernel image
+            *.deb  # If using bindeb-pkg
+        if: success()
