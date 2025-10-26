@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4  # Checks out your repo; optional if kernel source is already in repo
+        with:
+          fetch-depth: 50
 
       - name: Install build dependencies
         run: |
@@ -25,7 +27,6 @@ jobs:
             dwarves \
             flex \
             git \
-            kernel-package \
             libelf-dev \
             libncurses5-dev \
             libssl-dev \
