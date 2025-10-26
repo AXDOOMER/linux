@@ -3,7 +3,6 @@ name: Compile Linux Kernel
 on:
   push:
     branches:
-      - main  # Trigger on pushes to the main branch; adjust as needed
       - master
 
 jobs:
@@ -12,7 +11,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4  # Checks out your repo; optional if kernel source is already in repo
+        uses: actions/checkout@v4 
         with:
           fetch-depth: 50
 
@@ -34,18 +33,16 @@ jobs:
 
       - name: Compile kernel
         run: |
-          make -j$(nproc)  # Compile with all available cores; this may take significant time
+          make -j$(nproc)
 
-      - name: Optional - Build Debian package
+      - name: Build Debian package
         run: |
-          make -j$(nproc) bindeb-pkg  # Builds a .deb package; optional step for packaging
-        if: success()  # Run only if compilation succeeds
+          make -j$(nproc) bindeb-pkg
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: kernel-build
           path: |
-            arch/x86/boot/bzImage  # Example: Upload the kernel image
-            *.deb  # If using bindeb-pkg
-        if: success()
+            arch/x86/boot/bzImage
+            *.deb  # via bindeb-pkg
