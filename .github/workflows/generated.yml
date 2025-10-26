@@ -29,9 +29,10 @@ jobs:
             libelf-dev \
             libncurses5-dev \
             libssl-dev \
-            fakeroot
+            fakeroot \
+            debhelper 
 
-      - name: Compile kernel
+      - name: Build kernel
         run: |
           make -j$(nproc)
 
