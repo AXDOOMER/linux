@@ -1843,6 +1843,9 @@ PHONY += misc-check
 misc-check:
 	$(Q)$(srctree)/scripts/misc-check
 
+# for the pipeline generator
+build: all
+
 all: misc-check
 
 PHONY += scripts_gdb
