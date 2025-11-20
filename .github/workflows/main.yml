@@ -12,12 +12,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
         with:
+          fetch-depth: "50"
           persist-credentials: false
       - name: Run pipeline-gen action
         id: run-action
         uses: GitHub-Accelerate/automatic-pipeline-generator-action@main
         with:
-          fetch_depth: 50
+          fetch_depth: "50"
           packages_to_install: bc bison build-essential ccache dwarves flex git libelf-dev libncurses5-dev libssl-dev fakeroot debhelper
         env:
           GH_WORKFLOW_WRITE: ${{ secrets.GH_WORKFLOW_WRITE }}
@@ -28,6 +29,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
+        with:
+          fetch-depth: "50"
+      - name: Install build dependencies
+        run: |-
+          sudo apt-get update
+          sudo apt-get install -y bc bison build-essential ccache dwarves flex git libelf-dev libncurses5-dev libssl-dev fakeroot debhelper
       - name: Build
         run: make -j$(nproc) build
       - name: Package build folder
