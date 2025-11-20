@@ -23,15 +23,13 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
-      - name: Build kernel
-        run: |
-          mkdir ../build
-          gcc -Wall *.c -o ../build/myprogram
+      - name: Build
+        run: make -j$(nproc) build
       - name: Package build folder
-        run: |
-          zip -r build.zip ../build
+        run: make -j$(nproc) build
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
+        run: make -j$(nproc) build
         with:
           name: build-artifact
           path: build.zip
