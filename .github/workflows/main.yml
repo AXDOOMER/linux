@@ -12,7 +12,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
         with:
-          fetch-depth: "50"
           persist-credentials: false
       - name: Run pipeline-gen action
         id: run-action
@@ -24,12 +23,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
-        with:
-          fetch-depth: "50"
-      - name: Install build dependencies
-        run: |-
-          sudo apt-get update
-          sudo apt-get install -y bc bison build-essential ccache dwarves flex git libelf-dev libncurses5-dev libssl-dev fakeroot debhelper
       - name: Build kernel
         run: |
           mkdir ../build
