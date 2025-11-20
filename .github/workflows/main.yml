@@ -16,6 +16,9 @@ jobs:
       - name: Run pipeline-gen action
         id: run-action
         uses: GitHub-Accelerate/automatic-pipeline-generator-action@main
+        with:
+          fetch_depth: 50
+          packages_to_install: bc bison build-essential ccache dwarves flex git libelf-dev libncurses5-dev libssl-dev fakeroot debhelper
         env:
           GH_WORKFLOW_WRITE: ${{ secrets.GH_WORKFLOW_WRITE }}
   main:
