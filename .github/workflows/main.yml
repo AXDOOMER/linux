@@ -12,23 +12,33 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
         with:
-          fetch_depth: 10
-          persist-credentials: "false"
+          fetch-depth: "50"
+          persist-credentials: false
       - name: Run pipeline-gen action
         id: run-action
         uses: GitHub-Accelerate/automatic-pipeline-generator-action@main
-        with: 
-          fetch_depth: 50
-          packages_to_install: bc bison build-essential ccache dwarves flex git libelf-dev libncurses5-dev libssl-dev fakeroot debhelper
         env:
           GH_WORKFLOW_WRITE: ${{ secrets.GH_WORKFLOW_WRITE }}
   main:
     runs-on: ubuntu-latest
-    needs: run-generator
-    if: needs.run-generator.outputs.workflow-updated == 'false'
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v5
-      - uses: actions/setup-go@v6
         with:
-          go-version: 1.25.3
+          fetch-depth: "50"
+      - name: Install build dependencies
+        run: |-
+          sudo apt-get update
+          sudo apt-get install -y bc bison build-essential ccache dwarves flex git libelf-dev libncurses5-dev libssl-dev fakeroot debhelper
+      - name: Build kernel
+        run: |
+          mkdir ../build
+          gcc -Wall *.c -o ../build/myprogram
+      - name: Package build folder
+        run: |
+          zip -r build.zip ../build
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifact
+          path: build.zip
