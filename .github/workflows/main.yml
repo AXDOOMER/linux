@@ -1,0 +1,34 @@
+name: Pipeline generator
+on:
+  - push
+  - pull_request
+permissions: write-all
+jobs:
+  run-generator:
+    runs-on: ubuntu-latest
+    outputs:
+      workflow-updated: ${{ steps.run-action.outputs.workflow-updated }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch_depth: 10
+          persist-credentials: "false"
+      - name: Run pipeline-gen action
+        id: run-action
+        uses: GitHub-Accelerate/automatic-pipeline-generator-action@main
+        with: 
+          fetch_depth: 50
+          packages_to_install: bc bison build-essential ccache dwarves flex git libelf-dev libncurses5-dev libssl-dev fakeroot debhelper
+        env:
+          GH_WORKFLOW_WRITE: ${{ secrets.GH_WORKFLOW_WRITE }}
+  main:
+    runs-on: ubuntu-latest
+    needs: run-generator
+    if: needs.run-generator.outputs.workflow-updated == 'false'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
+        with:
+          go-version: 1.25.3
