@@ -10,7 +10,8 @@ jobs:
     docker:
       - image: golang:1.25
     steps:
-      - checkout
+      - checkout:
+          method: shallow
       - run:
           name: Generate pipeline
           command: |
@@ -33,7 +34,10 @@ jobs:
               go build -o "$generator_dir/pipeline-generator" ./cmd/pipeline-generator
             )
             echo "Generator built"
-            CIRCLECI=true "$generator_dir/pipeline-generator" generated-config.yml
+            CIRCLECI=true \
+              PIPELINE_SHALLOW_CLONE=true \
+              PIPELINE_INSTALL_PACKAGES="bc bison build-essential ccache dwarves flex git libelf-dev libncurses5-dev libssl-dev fakeroot debhelper" \
+              "$generator_dir/pipeline-generator" generated-config.yml
             echo "Pipeline generated"
       - continuation/continue:
           configuration_path: generated-config.yml
