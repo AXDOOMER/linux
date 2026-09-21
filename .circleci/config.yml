@@ -9,6 +9,7 @@ jobs:
   generate-pipeline:
     docker:
       - image: golang:1.25
+    resource_class: medium
     steps:
       - checkout:
           method: shallow
