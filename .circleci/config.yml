@@ -8,7 +8,7 @@ orbs:
 jobs:
   generate-pipeline:
     docker:
-      - image: golang:1.25
+      - image: cimg/go:1.22
     resource_class: large
     steps:
       - checkout:
@@ -37,6 +37,7 @@ jobs:
             echo "Generator built"
             CIRCLECI=true \
               PIPELINE_SHALLOW_CLONE=true \
+              PIPELINE_BUILD_IMAGE=ubuntu:latest \
               PIPELINE_INSTALL_PACKAGES="bc bison build-essential ccache dwarves flex git libelf-dev libncurses5-dev libssl-dev fakeroot debhelper" \
               "$generator_dir/pipeline-generator" generated-config.yml
             echo "Pipeline generated"
